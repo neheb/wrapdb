@@ -8,6 +8,8 @@
     "explicitly disable that Operating System in build_on.",
     "Please remove projects from those lists once they are updated."
   ],
+  "broken_openbsd": [
+  ],
   "broken_linux": [
     "arduinocore-avr"
   ],

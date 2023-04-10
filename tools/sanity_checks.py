@@ -25,7 +25,7 @@ import tempfile
 import platform
 
 from pathlib import Path
-from utils import Version, is_ci, is_alpinelike, is_debianlike, is_linux, is_macos, is_windows, is_msys
+from utils import Version, is_ci, is_alpinelike, is_debianlike, is_linux, is_macos, is_openbsd, is_windows, is_msys
 
 PERMITTED_FILES = ['generator.sh', 'meson.build', 'meson_options.txt', 'LICENSE.build']
 PER_PROJECT_PERMITTED_FILES = {
@@ -332,6 +332,7 @@ class TestReleases(unittest.TestCase):
             options.append('--wipe')
         debian_packages = ci.get('debian_packages', [])
         brew_packages = ci.get('brew_packages', [])
+        openbsd_packages = ci.get('openbsd_packages', [])
         choco_packages = ci.get('choco_packages', [])
         msys_packages = ci.get('msys_packages', [])
         alpine_packages = ci.get('alpine_packages', [])
@@ -357,6 +358,12 @@ class TestReleases(unittest.TestCase):
                     meson_env['PATH'] = 'C:\\Program Files\\NASM;' + meson_env['PATH']
             else:
                 s = ', '.join(choco_packages)
+                print(f'The following packages could be required: {s}')
+        elif openbsd_packages and is_openbsd():
+            if is_ci():
+                subprocess.check_call(['pkg_add'] + openbsd_packages)
+            else:
+                s = ', '.join(openbsd_packages)
                 print(f'The following packages could be required: {s}')
         elif msys_packages and is_msys():
             if is_ci():

@@ -170,3 +170,22 @@ jobs:
       - name: Sanity Checks
         run: |
           ./tools/sanity_checks.py
+
+  OpenBSD:
+    if: github.event_name != 'schedule' || github.repository == 'mesonbuild/wrapdb'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: vmactions/openbsd-vm@v1
+        with:
+          copyback: false
+          envs: 'TEST_BUILD_ALL'
+          prepare: |
+            pkg_add cmake git ninja pkgconf py3-pip
+            python3 -m pip install --pre meson
+            git config --global --add safe.directory '*'
+          run: |
+            ./tools/sanity_checks.py
