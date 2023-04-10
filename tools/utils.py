@@ -219,6 +219,9 @@ def is_msys() -> bool:
 def is_macos():
     return any(platform.mac_ver()[0])
 
+def is_freebsd() -> bool:
+    return platform.system().lower() == 'freebsd'
+
 @functools.lru_cache
 def venv_meson_path() -> Path:
     if is_ci():

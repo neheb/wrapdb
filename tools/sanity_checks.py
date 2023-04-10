@@ -32,7 +32,7 @@ import textwrap
 import zipfile
 
 from pathlib import Path
-from utils import CIConfig, ProjectCIConfig, Releases, Version, ci_group, is_ci, is_alpinelike, is_debianlike, is_macos, is_windows, is_msys, read_wrap, FormattingError, format_meson, format_wrap
+from utils import CIConfig, ProjectCIConfig, Releases, Version, ci_group, is_ci, is_alpinelike, is_debianlike, is_freebsd, is_macos, is_windows, is_msys, read_wrap, FormattingError, format_meson, format_wrap
 
 MINIMUM_MESON_VERSION = '0.56.0'  # also in README.md
 PERMITTED_FILES = {'generator.sh', 'meson.build', 'meson_options.txt', 'meson.options', 'LICENSE.build'}
@@ -596,6 +596,7 @@ class TestReleases(unittest.TestCase):
     def install_packages(self, ci: ProjectCIConfig) -> dict[str, str]:
         debian_packages = ci.get('debian_packages', [])
         brew_packages = ci.get('brew_packages', [])
+        freebsd_packages = ci.get('freebsd_packages', [])
         choco_packages = ci.get('choco_packages', [])
         msys_packages = ci.get('msys_packages', [])
         alpine_packages = ci.get('alpine_packages', [])
@@ -625,6 +626,12 @@ class TestReleases(unittest.TestCase):
                 # nasm is not added into PATH by default:
                 # https://bugzilla.nasm.us/show_bug.cgi?id=3392224.
                 meson_env['PATH'] = 'C:\\Program Files\\NASM;' + meson_env['PATH']
+        elif freebsd_packages and is_freebsd():
+            if is_ci():
+                subprocess.check_call(['pkg', 'install', '-y'] + freebsd_packages)
+            else:
+                s = ', '.join(freebsd_packages)
+                print(f'The following packages could be required: {s}')
         elif msys_packages and is_msys():
             do_install('MSYS2', ['sh', '-lc', 'pacboy --noconfirm sync $(printf "%s:p " $@)', 'pacboy'], msys_packages)
         elif alpine_packages and is_alpinelike():
