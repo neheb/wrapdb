@@ -106,3 +106,6 @@ def is_msys() -> bool:
 
 def is_macos():
     return any(platform.mac_ver()[0])
+
+def is_freebsd() -> bool:
+    return platform.system().lower() == 'freebsd'

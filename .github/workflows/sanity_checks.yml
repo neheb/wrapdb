@@ -146,3 +146,20 @@ jobs:
       - name: Sanity Checks
         run: |
           ./tools/sanity_checks.py
+
+  FreeBSD:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: vmactions/freebsd-vm@v1
+        with:
+          copyback: false
+          prepare: |
+            pkg install -y cmake git ninja pkgconf py-pip
+            python -m pip install --pre meson
+            git config --global --add safe.directory '*'
+          run: |
+            ./tools/sanity_checks.py
