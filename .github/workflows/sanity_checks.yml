@@ -43,6 +43,9 @@ jobs:
 
       - uses: ilammy/msvc-dev-cmd@v1
       - name: Sanity Checks
+        env:
+          CC: cl
+          CXX: cl
         run: |
           python tools/sanity_checks.py
 
