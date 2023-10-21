@@ -22,10 +22,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: egor-tensin/setup-clang@v1
+        with:
+          version: 17
+
       - name: Install packages
+        env:
+          CC_LD: lld-17
+          CXX_LD: lld-17
         run: |
           sudo apt-get update
-          sudo apt-get -y install build-essential python3-pip ninja-build
+          sudo apt-get -y install build-essential python3-pip ninja-build lld-17
           python3 -m pip install git+https://github.com/mesonbuild/meson
 
       - name: Sanity Checks
