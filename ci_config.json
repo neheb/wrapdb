@@ -455,6 +455,14 @@
       "libpciaccess-dev"
     ]
   },
+  "libpsl": {
+    "build_options": [
+      "libpsl:runtime=libidn2"
+    ],
+    "msys_packages": [
+      "libidn2"
+    ]
+  },
   "libtirpc": {
     "_comment": "Linux only",
     "build_on": {
