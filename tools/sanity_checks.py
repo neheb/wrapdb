@@ -354,6 +354,7 @@ class TestReleases(unittest.TestCase):
             deps = [d for d in deps if d not in skip_deps]
 
         options = ['-Dpython.install_env=auto', f'-Dwraps={name}']
+        options.append('-Ddefault_library=static')
         options.append('-Ddepnames={}'.format(','.join(deps or [])))
         options.append('-Dprognames={}'.format(','.join(progs or [])))
         if ci.get('fatal_warnings', True) and self.fatal_warnings:
