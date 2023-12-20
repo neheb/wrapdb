@@ -131,7 +131,7 @@ jobs:
           python tools/sanity_checks.py
 
   MacOS:
-    runs-on: macos-latest
+    runs-on: macos-latest-xlarge
     steps:
       - uses: actions/checkout@v4
         with:
