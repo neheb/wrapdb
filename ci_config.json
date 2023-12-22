@@ -584,6 +584,20 @@
       "libpciaccess-dev"
     ]
   },
+  "libmpdclient": {
+    "alpine_packages": [
+      "check"
+    ],
+    "debian_packages": [
+      "check"
+    ],
+    "brew_packages": [
+      "check"
+    ],
+    "build_options": [
+      "libmpdclient:test=false"
+    ]
+  },
   "libpfm": {
     "_comment": "Wrap only supports Linux",
     "build_on": {

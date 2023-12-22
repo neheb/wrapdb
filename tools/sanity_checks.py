@@ -66,6 +66,9 @@ PER_PROJECT_PERMITTED_FILES = {
     'libexif': [
         'def.py',
     ],
+    'libmpdclient': [
+        'test/capture.c',
+    ],
     'm4': [
         'm4_test_runner.py',
     ],
