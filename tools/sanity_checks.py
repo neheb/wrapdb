@@ -25,7 +25,7 @@ import tempfile
 import platform
 
 from pathlib import Path
-from utils import Version, is_ci, is_alpinelike, is_debianlike, is_linux, is_macos, is_windows, is_msys
+from utils import Version, is_ci, is_muon, is_alpinelike, is_debianlike, is_linux, is_macos, is_windows, is_msys
 
 PERMITTED_FILES = ['generator.sh', 'meson.build', 'meson_options.txt', 'LICENSE.build']
 PER_PROJECT_PERMITTED_FILES = {
@@ -371,7 +371,11 @@ class TestReleases(unittest.TestCase):
                 s = ', '.join(alpine_packages)
                 print(f'The following packages could be required: {s}')
 
-        res = subprocess.run(['meson', 'setup', builddir] + options, env=meson_env)
+        if is_muon():
+            m = 'muon'
+        else:
+            m = 'meson'
+        res = subprocess.run([m, 'setup'] + options + [builddir], env=meson_env)
         if res.returncode == 0:
             if not expect_working:
                 raise Exception(f'Wrap {name} successfully configured but was expected to fail')
@@ -401,18 +405,18 @@ class TestReleases(unittest.TestCase):
                     print('cannot verify in wrapdb because the archive cannot be unpacked')
                     return
             raise Exception(f'Wrap {name} failed to configure due to bugs in the wrap, rather than due to being unsupported')
-        subprocess.check_call(['meson', 'compile', '-C', builddir], env=meson_env)
+        subprocess.check_call([m, 'compile', '-C', builddir], env=meson_env)
         if not ci.get('skip_tests', False):
             test_options = ci.get('test_options', [])
             try:
-                subprocess.check_call(['meson', 'test', '-C', builddir, '--suite', name, '--print-errorlogs'] + test_options)
+                subprocess.check_call([m, 'test', '-C', builddir, '--suite', name, '--print-errorlogs'] + test_options)
             except subprocess.CalledProcessError:
                 log_file = Path(builddir, 'meson-logs', 'testlog.txt')
                 print('::group::==== testlog.txt ====')
                 print(log_file.read_text(encoding='utf-8'))
                 print('::endgroup::')
                 raise
-        subprocess.check_call(['meson', 'install', '-C', builddir, '--destdir', 'pkg'])
+        subprocess.check_call([m, 'install', '-C', builddir, '--destdir', 'pkg'])
 
     def is_permitted_file(self, subproject: str, filename: str):
         if filename in PERMITTED_FILES:

@@ -89,6 +89,9 @@ class Version:
 def is_ci() -> bool:
     return 'CI' in os.environ
 
+def is_muon() -> bool:
+    return 'MUON' in os.environ
+
 def is_alpinelike() -> bool:
     return os.path.isfile('/etc/alpine-release')
 
