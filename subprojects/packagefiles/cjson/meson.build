@@ -58,7 +58,7 @@ libcjson_utils = library(
 libcjson_utils_dep = declare_dependency(
     compile_args: dllimport_args,
     include_directories: ['include-workaround-meson'],
-    link_with: [libcjson, libcjson_utils],
+    link_with: [libcjson_utils],
 )
 
 pkgconfig = import('pkgconfig')
@@ -81,10 +81,4 @@ if meson.version().version_compare('>=0.54.0')
     meson.override_dependency('libcjson_utils', libcjson_utils_dep)
 endif
 
-# the tests do not work on MSVC. Missing unity_setup.c
-if get_option('tests')
-    e = executable('root-test', 'test.c', dependencies: libcjson_utils_dep)
-    test('root-test', e)
-
-    subdir('tests')
-endif
+subdir('tests')
