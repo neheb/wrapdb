@@ -2,7 +2,7 @@ project(
   'cjson',
   'c',
   version: '1.7.18',
-  meson_version: '>=0.50.0',
+  meson_version: '>=0.49.0',
   license: 'MIT',
 )
 
@@ -13,17 +13,11 @@ if cc.get_argument_syntax() == 'msvc'
 endif
 
 if get_option('default_library') == 'static'
-  add_project_arguments('-DCJSON_HIDE_SYMBOLS', language : 'c')
+  add_project_arguments('-DCJSON_HIDE_SYMBOLS', '-UCJSON_API_VISIBILITY', language : 'c')
   dllimport_args = ['-DCJSON_HIDE_SYMBOLS']
 else
-  add_project_arguments('-DCJSON_EXPORT_SYMBOLS', language : 'c')
+  add_project_arguments('-DCJSON_EXPORT_SYMBOLS', '-DCJSON_API_VISIBILITY', language : 'c')
   dllimport_args = ['-DCJSON_IMPORT_SYMBOLS']
-endif
-
-add_project_arguments('-DCJSON_API_VISIBILITY', language: 'c')
-
-if cc.has_function_attribute('weak')
-  add_project_arguments('-DUNITY_WEAK_ATTRIBUTE=__attribute__((weak))', language: 'c')
 endif
 
 libm = cc.find_library('m', required: false)
@@ -32,18 +26,17 @@ headers = files('cJSON.h', 'cJSON_Utils.h')
 install_headers(headers, subdir: 'cjson')
 
 subdir('include-workaround-meson/cjson')
+incdir = include_directories('include-workaround-meson')
 
 libcjson = library(
     'cjson',
     'cJSON.c',
     dependencies: libm,
-    gnu_symbol_visibility: 'hidden',
-    version: meson.project_version(),
     install: true,
 )
 libcjson_dep = declare_dependency(
     compile_args: dllimport_args,
-    include_directories: ['include-workaround-meson'],
+    include_directories: incdir,
     link_with: libcjson,
 )
 
@@ -51,14 +44,12 @@ libcjson_utils = library(
     'cjson_utils',
     'cJSON_Utils.c',
     dependencies: [libcjson_dep, libm],
-    gnu_symbol_visibility: 'hidden',
-    version: meson.project_version(),
     install: true,
 )
 libcjson_utils_dep = declare_dependency(
     compile_args: dllimport_args,
-    include_directories: ['include-workaround-meson'],
-    link_with: [libcjson_utils],
+    include_directories: incdir,
+    link_with: libcjson_utils,
 )
 
 pkgconfig = import('pkgconfig')

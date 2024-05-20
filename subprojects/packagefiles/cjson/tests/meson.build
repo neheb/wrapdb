@@ -26,8 +26,16 @@ unity_tests = [
     'readme_examples',
 ]
 
-unity = static_library('unity', 'unity/src/unity.c')
-unity_dep = declare_dependency(link_with: unity, include_directories: 'unity/src')
+weak_arg = []
+if cc.has_function_attribute('weak')
+  weak_arg = '-DUNITY_WEAK_ATTRIBUTE=__attribute__((weak))'
+elif cc.has_function_attribute('selectany')
+  weak_arg = '-DUNITY_WEAK_ATTRIBUTE=__declspec(selectany)'
+endif
+
+unity = static_library('unity', 'unity/src/unity.c', c_args: weak_arg)
+unity_incdir = include_directories('unity/src')
+unity_dep = declare_dependency(compile_args: weak_arg, link_with: unity, include_directories: unity_incdir)
 us = cc.get_argument_syntax() == 'msvc' ? ['unity_setup.c'] : []
 
 foreach t : unity_tests
