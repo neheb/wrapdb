@@ -72,7 +72,7 @@ add_project_arguments(cc.get_supported_arguments(test_cflags), language: 'c')
 
 common_ldflags = []
 
-if host_machine.system() == 'linux' and cc.has_link_argument('-Wl,--version-script=' + join_paths(project_root, 'test.ld'))
+if cc.has_link_argument('-Wl,--version-script=' + join_paths(project_root, 'test.ld'))
   common_ldflags += '-Wl,--version-script=' + join_paths(project_root, 'libmpdclient.ld')
 endif
 
@@ -156,7 +156,6 @@ libmpdclient = library('mpdclient',
     platform_deps,
   ],
   link_args: common_ldflags,
-  vs_module_defs: 'libmpdclient.def',
   version: meson.project_version(),
   soversion: splitted_version[0],
   install: true
