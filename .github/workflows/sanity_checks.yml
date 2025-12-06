@@ -403,7 +403,7 @@ jobs:
         with:
           copyback: false
           prepare: |
-            pkg install -y cmake git ninja pkgconf py-pip
+            pkg install -y cmake git ninja pkgconf python
             python -m pip install --pre meson
             git config --global --add safe.directory '*'
           run: |
